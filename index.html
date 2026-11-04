@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Divine Foods Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --surface: #ffffff;
+    --surface-2: #f0eee9;
+    --text: #1d1b18;
+    --muted: #6b665e;
+    --border: #e3e0d9;
+    --accent: #c2410c;          /* brand accent – swap for Divine Foods colour */
+    --accent-soft: #fde7da;
+    --done: #15803d;
+    --done-soft: #dcfce7;
+    --active: #c2410c;
+    --active-soft: #fde7da;
+    --upcoming: #9a948a;
+    --upcoming-soft: #ece9e3;
+    --warn: #b45309;
+    --warn-soft: #fef3c7;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.05);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141311; --surface: #1d1c19; --surface-2: #262420; --text: #f2efe9; --muted: #a39d93;
+      --border: #33302b; --accent: #fb923c; --accent-soft: #3a2416; --done: #4ade80; --done-soft: #16301f;
+      --active: #fb923c; --active-soft: #3a2416; --upcoming: #7a746b; --upcoming-soft: #2a2824;
+      --warn: #fbbf24; --warn-soft: #3a2e12;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141311; --surface: #1d1c19; --surface-2: #262420; --text: #f2efe9; --muted: #a39d93;
+    --border: #33302b; --accent: #fb923c; --accent-soft: #3a2416; --done: #4ade80; --done-soft: #16301f;
+    --active: #fb923c; --active-soft: #3a2416; --upcoming: #7a746b; --upcoming-soft: #2a2824;
+    --warn: #fbbf24; --warn-soft: #3a2e12;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px 64px; }
+  button { font: inherit; color: inherit; }
+  h2, h3, h4 { letter-spacing: -.01em; }
+
+  /* Header */
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+  h1 { font-size: clamp(24px, 4vw, 32px); line-height: 1.2; margin: 0; letter-spacing: -.01em; }
+  .lede { margin: 8px 0 0; max-width: 640px; color: var(--muted); }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .theme-btn {
+    border: 1px solid var(--border); background: var(--surface); border-radius: 999px;
+    padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--muted);
+  }
+  .theme-btn:hover { color: var(--text); }
+
+  /* Summary cards */
+  .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); min-width: 0; }
+  .card h3 { margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .big { font-size: 34px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+  .big small { font-size: 15px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+  .bar { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+  .bar > span { display: block; height: 100%; background: var(--accent); border-radius: inherit; width: 0; transition: width .8s cubic-bezier(.2,.7,.2,1); }
+  .now-title { font-size: 17px; font-weight: 600; margin: 0 0 4px; line-height: 1.35; }
+  .now-sub { color: var(--muted); font-size: 14px; margin: 0; }
+
+  /* Timeline */
+  .section-title { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  .timeline { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; margin-bottom: 24px; padding: 8px 0 0; }
+  .timeline::before {
+    content: ""; position: absolute; left: var(--half, 0); right: var(--half, 0); top: 30px; height: 3px; background: var(--border); border-radius: 3px;
+  }
+  .timeline .fill { position: absolute; left: 0; top: 30px; height: 3px; background: var(--done); border-radius: 3px; width: 0; transition: width .8s cubic-bezier(.2,.7,.2,1), height .8s cubic-bezier(.2,.7,.2,1); }
+  .step {
+    position: relative; background: none; border: 0; padding: 0 6px 10px; cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 10px; border-radius: 10px;
+  }
+  .step:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .step-text { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .dot {
+    width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; flex: none;
+    border: 3px solid var(--upcoming); background: var(--surface); color: var(--upcoming); position: relative; z-index: 1;
+    transition: transform .15s ease;
+  }
+  .step:hover .dot { transform: scale(1.08); }
+  .step[data-status="done"] .dot { background: var(--done); border-color: var(--done); color: #fff; }
+  .step[data-status="active"] .dot { border-color: var(--active); color: var(--active); background: var(--active-soft); }
+  .step[data-current="true"] .dot::after {
+    content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 2px solid var(--active); opacity: .5;
+    animation: pulse 2s ease-out infinite;
+  }
+  @keyframes pulse { 0% { transform: scale(.85); opacity: .6; } 100% { transform: scale(1.25); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .step[data-current="true"] .dot::after { animation: none; } }
+  .step-label { font-weight: 600; font-size: 14px; line-height: 1.3; }
+  .step-date { font-size: 12px; color: var(--muted); }
+  .badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .badge.here { color: #fff; background: var(--active); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .badge.ms { color: var(--muted); background: var(--surface-2); border: 1px solid var(--border); }
+  .step[aria-selected="true"] { background: var(--surface); box-shadow: var(--shadow); }
+  .step[aria-selected="true"] .step-label { color: var(--accent); }
+
+  /* Detail panel */
+  .detail { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; margin-bottom: 40px; }
+  .detail-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .detail h2 { margin: 0; font-size: 22px; }
+  .pill { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .pill.done, .pill.paid, .pill.received { background: var(--done-soft); color: var(--done); }
+  .pill.active, .pill.invoiced { background: var(--active-soft); color: var(--active); }
+  .pill.upcoming, .pill.pending { background: var(--upcoming-soft); color: var(--muted); }
+  .pill.overdue { background: var(--warn-soft); color: var(--warn); }
+  .desc { color: var(--muted); margin: 0 0 18px; }
+  .callout { font-size: 14px; background: var(--surface-2); border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 0 0 18px; }
+  .tasks { list-style: none; padding: 0; margin: 0; }
+  .task { display: flex; align-items: flex-start; gap: 12px; padding: 10px 4px; border-top: 1px solid var(--border); }
+  .task:first-child { border-top: 0; }
+  .tick { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--upcoming); display: grid; place-items: center; margin-top: 1px; }
+  .task.done .tick { background: var(--done); border-color: var(--done); }
+  .task.done .tick::after { content: ""; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+  .task.active .tick { border-color: var(--active); }
+  .task.active .tick::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--active); }
+  .task-name { font-weight: 500; }
+  .task.done .task-name { color: var(--muted); }
+  .task-note { font-size: 13px; color: var(--muted); }
+  .task-tag { margin-left: auto; font-size: 12px; color: var(--muted); white-space: nowrap; padding-left: 8px; }
+  .kv { display: flex; flex-direction: column; gap: 16px; margin: 0; }
+  .kv dt { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .kv dd { margin: 3px 0 0; }
+  .plain-list { padding-left: 18px; margin: 4px 0 0; }
+  .plain-list li { margin: 3px 0; }
+  .ms-box { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+  .ms-box strong { display: block; }
+  .ms-box span { color: var(--muted); }
+  .nav { display: flex; gap: 8px; margin-top: 20px; }
+  .nav button {
+    flex: 1; border: 1px solid var(--border); background: var(--surface-2); border-radius: 10px; padding: 8px 10px; cursor: pointer; font-size: 13px;
+  }
+  .nav button:disabled { opacity: .4; cursor: default; }
+  .nav button:not(:disabled):hover { border-color: var(--accent); }
+
+  /* Info tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 18px; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 14px; cursor: pointer;
+    font-weight: 600; font-size: 14px; color: var(--muted); white-space: nowrap; margin-bottom: -1px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px; }
+  .tab .count { font-size: 11px; background: var(--surface-2); color: var(--muted); border-radius: 999px; padding: 1px 7px; margin-left: 6px; }
+  .tabpanel[hidden] { display: none; }
+  .panel-intro { color: var(--muted); margin: 0 0 16px; max-width: 720px; }
+
+  /* Payments */
+  .pay-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .pay { display: flex; flex-direction: column; gap: 10px; }
+  .pay-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .pay-num { font-weight: 700; font-size: 20px; }
+  .pay-num small { font-weight: 500; font-size: 13px; color: var(--muted); }
+  .pay-due { font-size: 13px; color: var(--muted); }
+  .pay-tied { font-weight: 600; line-height: 1.35; }
+  .pay ul { font-size: 13.5px; color: var(--muted); }
+  .pay.current { border-color: var(--accent); }
+  .footnote { font-size: 13px; color: var(--muted); margin-top: 14px; }
+
+  /* Access checklist */
+  .access-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+  .access-progress { min-width: 220px; flex: 1; max-width: 360px; }
+  .access-progress .lbl { font-size: 13px; color: var(--muted); }
+  .access { list-style: none; padding: 0; margin: 0; }
+  .access > li { border-top: 1px solid var(--border); }
+  .access > li:first-child { border-top: 0; }
+  .access details summary {
+    list-style: none; cursor: pointer; display: grid; grid-template-columns: 20px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 4px;
+  }
+  .access details summary::-webkit-details-marker { display: none; }
+  .access details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .chev { width: 8px; height: 8px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(-45deg); transition: transform .15s; justify-self: center; }
+  .access details[open] .chev { transform: rotate(45deg); }
+  .acc-name { font-weight: 600; }
+  .acc-by { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .acc-body { padding: 0 4px 14px 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 14px; }
+  .acc-body h4 { margin: 0 0 2px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .acc-body p { margin: 0; }
+  .acc-body .full { grid-column: 1 / -1; }
+
+  /* Key dates */
+  .dates { list-style: none; margin: 0; padding: 0; position: relative; }
+  .dates::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
+  .date-item { position: relative; display: grid; grid-template-columns: 16px 110px 1fr; gap: 14px; padding: 8px 0; align-items: baseline; }
+  .date-item .pt { width: 16px; height: 16px; border-radius: 50%; background: var(--surface); border: 3px solid var(--upcoming); position: relative; top: 3px; z-index: 1; }
+  .date-item.past .pt { background: var(--done); border-color: var(--done); }
+  .date-item.past { color: var(--muted); }
+  .date-item.today .pt, .date-item.nextup .pt { border-color: var(--active); background: var(--active-soft); }
+  .date-item .when { font-weight: 600; font-size: 14px; white-space: nowrap; }
+  .date-item .what div { margin-bottom: 2px; }
+  .date-item .tagline { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--active); margin-left: 6px; }
+  .date-item.key .what { font-weight: 600; }
+
+  /* How it works */
+  .how { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .how h3 { text-transform: none; letter-spacing: -.01em; font-size: 16px; color: var(--text); margin: 0 0 8px; }
+  .how p { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+  .how ul { font-size: 14px; }
+  .how .reassure { font-size: 14px; background: var(--done-soft); color: var(--text); padding: 10px 12px; border-radius: 8px; margin-top: 10px; }
+
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 28px; }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .legend .l-done::before { background: var(--done); }
+  .legend .l-active::before { background: var(--active); }
+  .legend .l-upcoming::before { background: var(--upcoming); }
+  footer { margin-top: 40px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  @media (max-width: 960px) {
+    .summary, .pay-grid { grid-template-columns: 1fr 1fr; }
+  }
+  /* Mobile: vertical timeline */
+  @media (max-width: 760px) {
+    .summary, .detail, .pay-grid, .how { grid-template-columns: 1fr; }
+    .timeline { grid-auto-flow: row; grid-auto-columns: auto; gap: 4px; }
+    .timeline::before, .timeline .fill { left: 27px; right: auto; top: 36px; bottom: 36px; width: 3px; height: auto; }
+    .timeline .fill { bottom: auto; }
+    .step { flex-direction: row; text-align: left; padding: 6px; gap: 14px; }
+    .step-text { align-items: flex-start; }
+    .access details summary { grid-template-columns: 20px 1fr auto; }
+    .access details summary .acc-by { grid-column: 2; grid-row: 2; margin-top: -8px; }
+    .acc-body { grid-template-columns: 1fr; padding-left: 4px; }
+    .date-item { grid-template-columns: 16px 1fr; }
+    .date-item .what { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow" id="agency"></p>
+      <h1 id="project-title"></h1>
+      <p class="lede" id="lede"></p>
+      <div class="meta" id="updated"></div>
+    </div>
+    <button class="theme-btn" id="theme-btn" type="button" aria-label="Toggle colour theme">◐ Theme</button>
+  </header>
+
+  <section class="summary" aria-label="Project summary">
+    <div class="card">
+      <h3>Where we are now</h3>
+      <p class="now-title" id="now-title"></p>
+      <p class="now-sub" id="now-sub"></p>
+    </div>
+    <div class="card">
+      <h3>Overall progress</h3>
+      <div class="big" id="overall-pct">0%</div>
+      <div class="bar"><span id="overall-bar"></span></div>
+    </div>
+    <div class="card">
+      <h3>Next milestone</h3>
+      <p class="now-title" id="next-title"></p>
+      <p class="now-sub" id="next-sub"></p>
+    </div>
+    <div class="card">
+      <h3>Ready to go live</h3>
+      <div class="big" id="countdown"></div>
+      <p class="now-sub" id="countdown-sub"></p>
+    </div>
+  </section>
+
+  <p class="section-title">Project timeline · click a phase for details</p>
+  <nav class="timeline" id="timeline" role="tablist" aria-label="Project phases">
+    <div class="fill" id="timeline-fill"></div>
+  </nav>
+
+  <section class="detail" id="detail" role="tabpanel" aria-live="polite">
+    <div class="card">
+      <div class="detail-head">
+        <h2 id="d-title"></h2>
+        <span class="pill" id="d-status"></span>
+      </div>
+      <p class="desc" id="d-desc"></p>
+      <p class="callout" id="d-callout" hidden></p>
+      <ul class="tasks" id="d-tasks"></ul>
+    </div>
+    <div class="card">
+      <dl class="kv">
+        <div><dt>Timeframe</dt><dd id="d-dates"></dd></div>
+        <div><dt>Phase progress</dt><dd><span id="d-pct"></span><div class="bar"><span id="d-bar"></span></div></dd></div>
+        <div id="d-ms-wrap"><dt>Ends with</dt><dd id="d-ms"></dd></div>
+        <div><dt>Your part</dt><dd><ul class="plain-list" id="d-you"></ul></dd></div>
+      </dl>
+      <div class="nav">
+        <button type="button" id="prev">← Previous</button>
+        <button type="button" id="next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="More information" id="info-tabs">
+    <button class="tab" role="tab" id="tab-payments" aria-controls="panel-payments" aria-selected="true">Payments</button>
+    <button class="tab" role="tab" id="tab-access" aria-controls="panel-access" aria-selected="false" tabindex="-1">What we need from you<span class="count" id="access-count"></span></button>
+    <button class="tab" role="tab" id="tab-dates" aria-controls="panel-dates" aria-selected="false" tabindex="-1">Key dates</button>
+    <button class="tab" role="tab" id="tab-how" aria-controls="panel-how" aria-selected="false" tabindex="-1">How it works</button>
+  </div>
+
+  <section class="tabpanel" role="tabpanel" id="panel-payments" aria-labelledby="tab-payments">
+    <p class="panel-intro">The project is paid in four payments of 25%. Each one is tied to something you can see and test, not to a date alone.</p>
+    <div class="pay-grid" id="payments"></div>
+    <p class="footnote">Invoices are issued on each milestone with 7-day payment terms, and show GST where it applies.</p>
+  </section>
+
+  <section class="tabpanel" role="tabpanel" id="panel-access" aria-labelledby="tab-access" hidden>
+    <div class="access-head">
+      <p class="panel-intro" style="margin:0">We need the first group of items by <strong>Fri 6 Nov</strong>, because the store system work starts on Mon 9 Nov and depends on them. If something arrives late, the dates after it move by the same number of days.</p>
+      <div class="access-progress">
+        <div class="lbl" id="access-lbl"></div>
+        <div class="bar"><span id="access-bar"></span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <h3>How to share passwords and keys safely</h3>
+      <ul class="plain-list" id="safety"></ul>
+    </div>
+    <div class="card">
+      <ul class="access" id="access"></ul>
+    </div>
+  </section>
+
+  <section class="tabpanel" role="tabpanel" id="panel-dates" aria-labelledby="tab-dates" hidden>
+    <div class="card">
+      <ul class="dates" id="dates"></ul>
+    </div>
+  </section>
+
+  <section class="tabpanel" role="tabpanel" id="panel-how" aria-labelledby="tab-how" hidden>
+    <div class="how" id="how"></div>
+  </section>
+
+  <div class="legend">
+    <span class="l-done">Completed</span>
+    <span class="l-active">In progress</span>
+    <span class="l-upcoming">Upcoming</span>
+  </div>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+/* =====================================================================
+   ROADMAP DATA — this is the only block you need to edit.
+
+   To update progress, change the `status` fields:
+     • Phase tasks:   "done" | "active" | "upcoming"
+     • Payments:      "upcoming" | "invoiced" | "paid"
+     • Access items:  "pending" | "received"
+   Phase status, "You are here", percentages, overdue flags and the
+   countdown are all calculated automatically. Bump `lastUpdated` too.
+   Dates are YYYY-MM-DD.
+   ===================================================================== */
+const ROADMAP = {
+  agency: "Cre8Tive Sync",
+  client: "Divine Foods",
+  project: "New Online Store",
+  summary: "Your new online store will be built and ready to go live by Mon 30 Nov 2026. We build the store system and its connections to your existing tools first, because that takes the longest, then finish the website your customers see.",
+  lastUpdated: "2026-11-04",
+  goLive: "2026-11-30",
+  switchOver: "2026-12-01",
+  today: null, // leave null to use the real date; set e.g. "2026-11-16" to preview
+
+  phases: [
+    {
+      name: "Kickoff and access",
+      start: "2026-11-05", end: "2026-11-06",
+      description: "Everything starts with a short handover meeting with your IT team, so we have access to what we need from day one.",
+      tasks: [
+        { name: "Kickoff meeting with your IT team", note: "Thu 5 Nov", status: "upcoming" },
+        { name: "Collect accounts, keys and system details", note: "See “What we need from you” below", status: "upcoming" },
+        { name: "Confirm this roadmap", status: "upcoming" },
+        { name: "Set up staging and live hosting in your accounts", note: "Ready by Wed 11 Nov", status: "upcoming" },
+      ],
+      yourPart: [
+        "Attend the kickoff meeting on Thu 5 Nov",
+        "Share the first access items and your systems description by Fri 6 Nov",
+        "Start the Apple Developer sign-up on Thu 5 Nov (Apple's checks can take 1–3 weeks)",
+      ],
+      milestone: { payment: 1, label: "Project start", when: "On signing (target Thu 5 Nov)" },
+    },
+    {
+      name: "Store system foundations",
+      start: "2026-11-09", end: "2026-11-13",
+      description: "The core of the store: your products, stock and pricing coming in from ERPNext, with payments and freight working on staging.",
+      tasks: [
+        { name: "Products, stock and both price lists coming in from ERPNext", status: "upcoming" },
+        { name: "Retail and café pricing", status: "upcoming" },
+        { name: "Stripe test payments", status: "upcoming" },
+        { name: "Freight quotes from your endpoint", status: "upcoming" },
+        { name: "Content editor set up", status: "upcoming" },
+        { name: "Admin dashboard and content editor logins", status: "upcoming" },
+        { name: "Short demo recording", status: "upcoming" },
+      ],
+      yourPart: [
+        "Share the remaining access items by Wed 11 Nov",
+        "If subscriptions are in scope, settle the details by Fri 13 Nov",
+        "Review and sign off Milestone 1 within 2 business days",
+      ],
+      milestone: { payment: 2, label: "Milestone 1 · Store system foundations working on staging", when: "Fri 13 Nov" },
+    },
+    {
+      name: "Store system connections",
+      start: "2026-11-16", end: "2026-11-20",
+      description: "Connecting the store to the rest of your business: orders, emails, enquiries and monitoring. Storefront pages start on staging once the foundations are in.",
+      tasks: [
+        { name: "Orders sent to ERPNext, with automatic retries", note: "Including delivery dates and addresses", status: "upcoming" },
+        { name: "Order emails through Listmonk", status: "upcoming" },
+        { name: "Enquiry forms to the right inbox, plus ERPNext leads", status: "upcoming" },
+        { name: "Uptime Kuma heartbeats", status: "upcoming" },
+        { name: "Order book", status: "upcoming" },
+        { name: "Hero products", status: "upcoming" },
+        { name: "Customer sign-in", status: "upcoming" },
+        { name: "AI assistant's content and limits", status: "upcoming" },
+        { name: "First storefront pages on staging", status: "upcoming" },
+        { name: "Demo recording", status: "upcoming" },
+      ],
+      yourPart: [
+        "Review and sign off Milestone 2 within 2 business days",
+      ],
+      milestone: { payment: 3, label: "Milestone 2 · Store system complete on staging", when: "Fri 20 Nov" },
+    },
+    {
+      name: "Storefront finished",
+      start: "2026-11-23", end: "2026-11-27",
+      description: "Every page of the website your customers see, connected to the store system.",
+      callout: "Your team tests on staging from Mon 23 Nov.",
+      tasks: [
+        { name: "Every page connected to the store system", status: "upcoming" },
+        { name: "Checkout", status: "upcoming" },
+        { name: "Google Analytics tracking", status: "upcoming" },
+        { name: "301 redirects from your current site", status: "upcoming" },
+        { name: "Legal pages ready for your wording", status: "upcoming" },
+        { name: "End-to-end testing on staging", status: "upcoming" },
+      ],
+      yourPart: [
+        "Test the store on staging from Mon 23 Nov",
+        "Approve the list of 301 redirects",
+        "Provide the wording for the legal pages",
+      ],
+    },
+    {
+      name: "Fixes, training and handover",
+      start: "2026-11-28", end: "2026-11-30",
+      description: "Final fixes, training and handover. Ready to go live on Mon 30 Nov, with the switch-over recommended for Tue 1 Dec.",
+      tasks: [
+        { name: "Final fixes", status: "upcoming" },
+        { name: "Recorded training session", status: "upcoming" },
+        { name: "Handover notes", status: "upcoming" },
+        { name: "All code in your GitHub", status: "upcoming" },
+        { name: "Store ready to go live", note: "Mon 30 Nov", status: "upcoming" },
+      ],
+      yourPart: [
+        "Join the recorded training session",
+        "Sign off the finished store",
+        "Choose your switch-over date (we recommend Tue 1 Dec)",
+      ],
+      milestone: { payment: 4, label: "Whole store ready to go live", when: "Mon 30 Nov" },
+    },
+  ],
+
+  payments: [
+    {
+      due: "2026-11-05", dueLabel: "On signing (target Thu 5 Nov)", tiedTo: "Project start", status: "upcoming",
+      receive: ["Kickoff meeting with your IT team", "The access checklist", "This roadmap confirmed", "Staging and live environments set up in your accounts by Wed 11 Nov"],
+    },
+    {
+      due: "2026-11-13", dueLabel: "Fri 13 Nov", tiedTo: "Store system foundations working on staging", status: "upcoming",
+      receive: ["Products, stock and both price lists coming in from ERPNext", "Retail and café prices showing correctly", "Stripe test payments", "Freight quotes from your endpoint", "Admin dashboard and content editor logins", "A short demo recording"],
+    },
+    {
+      due: "2026-11-20", dueLabel: "Fri 20 Nov", tiedTo: "Store system complete on staging", status: "upcoming",
+      receive: ["Orders sent to ERPNext with delivery dates and addresses", "Order emails through Listmonk", "Enquiry forms to the right inbox plus ERPNext leads", "Uptime Kuma heartbeats", "Order book and hero products", "Customer sign-in", "The AI assistant's content and limits", "First storefront pages on staging", "Demo recording"],
+    },
+    {
+      due: "2026-11-30", dueLabel: "Mon 30 Nov", tiedTo: "Whole store ready to go live", status: "upcoming",
+      receive: ["Finished storefront on staging, tested end to end", "Checkout, sign-in and AI chat working", "Google Analytics tracking", "Approved list of 301 redirects", "Legal pages ready for your wording", "Recorded training session and handover notes", "All code in your GitHub", "IP transfers to Divine Foods on this payment"],
+    },
+  ],
+
+  safety: [
+    "Set up a shared folder in your password manager (for example 1Password or Bitwarden) and share it with our named team members. Everything below goes there.",
+    "Please never send passwords or keys by email, chat or text message.",
+    "Live payment keys are entered by you directly into your hosting accounts, so we never need to see them.",
+    "Each account stays in Divine Foods' name, with the lowest level of access that lets us do the work. You can remove us at any time.",
+  ],
+
+  access: [
+    { system: "Password manager", setUp: "A shared folder for this project", share: "Invite for our team", by: "2026-11-05", status: "pending" },
+    { system: "ERPNext", setUp: "A separate user just for the website, with access only to products, prices, stock, customers, sales orders and leads. A test copy of ERPNext if you have one.", share: "Web address, the user's key and secret, ERPNext version", by: "2026-11-06", status: "pending" },
+    { system: "Freight quote endpoint", setUp: "A login just for the website, and a test mode if available", share: "Web address, login details, example requests and replies", by: "2026-11-06", status: "pending" },
+    { system: "Listmonk", setUp: "A website user that can only send emails, read templates and add newsletter sign-ups", share: "Web address, user name and key, Listmonk version", by: "2026-11-06", status: "pending" },
+    { system: "GitHub", setUp: "An organisation owned by Divine Foods (at least two owners from your team)", share: "Invite us as collaborators on the store repositories", by: "2026-11-06", status: "pending" },
+    { system: "Railway (store hosting)", setUp: "A Pro workspace with separate staging and live projects", share: "Invite us as “Member” (you keep billing and admin)", by: "2026-11-06", status: "pending" },
+    { system: "Stripe", setUp: "Your Stripe account, activated with business and bank details", share: "Invite us as “Developer” (or “Sandbox” during the build); test keys only", by: "2026-11-06", status: "pending" },
+    {
+      system: "Description of your existing systems", setUp: "A short document or spreadsheet is fine. This is what lets us connect to your tools without guessing.", by: "2026-11-06", status: "pending",
+      details: [
+        "ERPNext: the exact names of the retail and café price lists; whether prices include GST; how item codes work and which items are sold online; where shelf life, allergens and ingredients are stored; which warehouse sets online stock; how approved café customers are marked; which fields a sales order needs, including delivery dates and how card payments are recorded; and any automations that run when an order or customer is created.",
+        "Listmonk: the version you run; the newsletter list or lists and opt-in setting; the email templates to use for order confirmation, shipping, password reset and enquiries; and the sender address for each.",
+        "Freight endpoint: what it expects and returns (postcode, carton or pallet sizes and weights, service, price, delivery estimate); error messages; how long a quote stays valid; and your BigPost limit.",
+        "Email inboxes: confirm that cafes@, sales@ and info@ are set up.",
+        "Current website: admin access or a list of current page addresses (for the redirects), and any tracking codes in use.",
+        "Decisions: whether subscriptions are in scope, where chat notifications should go, and who will approve the legal page wording.",
+        "Contacts: a main IT contact for each system, and when changes are not allowed (for example, during month-end).",
+      ],
+    },
+    { system: "Uptime Kuma", setUp: "Monitors for the website and each background job", share: "One heartbeat link per monitor, and who gets alerts", by: "2026-11-11", status: "pending" },
+    { system: "Vercel (website hosting)", setUp: "A Pro team", share: "Invite us as “Developer”", by: "2026-11-11", status: "pending" },
+    { system: "Domain and DNS", setUp: "No change yet", share: "A contact who can add records, and your current DNS settings", by: "2026-11-11", status: "pending" },
+    { system: "Google Analytics", setUp: "Your GA4 property (and Tag Manager or ad accounts if you use them)", share: "Editor access", by: "2026-11-11", status: "pending" },
+    { system: "Sentry (error tracking)", setUp: "An organisation in your name", share: "Invite us as a member", by: "2026-11-11", status: "pending" },
+    { system: "AI assistant", setUp: "An account in your name with a monthly spending limit", share: "Developer access to that workspace only", by: "2026-11-11", status: "pending" },
+    { system: "Google and Microsoft sign-in", setUp: "A Google Cloud project and a Microsoft app registration, under a company email such as it@", share: "Add us as developers", by: "2026-11-11", status: "pending" },
+    { system: "Facebook sign-in", setUp: "A Meta developer app", share: "Add us as developer; we'll submit it for Meta's approval early", by: "2026-11-11", status: "pending" },
+    { system: "Apple sign-in", setUp: "An Apple Developer account for Divine Foods. If you don't have one, please start the sign-up on Thu 5 Nov, as Apple's checks can take one to three weeks.", share: "Add us as developer once approved", by: "2026-11-05", byLabel: "Start Thu 5 Nov", status: "pending" },
+  ],
+
+  keyDates: [
+    { date: "2026-11-05", items: ["Kickoff meeting with your IT team", "Payment 1 on signing", "Start the Apple Developer sign-up"], key: true },
+    { date: "2026-11-06", items: ["First access items and systems description due"] },
+    { date: "2026-11-09", items: ["Store system work starts"] },
+    { date: "2026-11-11", items: ["Remaining access items due", "Staging and live environments set up"] },
+    { date: "2026-11-13", items: ["Milestone 1: store system foundations (Payment 2)", "Subscription details settled, if in scope"], key: true },
+    { date: "2026-11-20", items: ["Milestone 2: store system complete on staging (Payment 3)"], key: true },
+    { date: "2026-11-23", items: ["Your team starts testing on staging"] },
+    { date: "2026-11-25", items: ["Cut-off for Apple, Facebook and Shop sign-in approvals"] },
+    { date: "2026-11-27", items: ["Black Friday: keep your current site running"] },
+    { date: "2026-11-30", items: ["Whole store ready to go live (Payment 4)", "Cyber Monday: keep your current site running"], key: true },
+    { date: "2026-12-01", items: ["Recommended switch-over to the new store"], key: true },
+  ],
+
+  how: [
+    {
+      title: "Signing off a milestone",
+      list: [
+        "We send a staging link, a short demo recording and a checklist of what to test.",
+        "You have 2 business days to approve it or tell us about any problems in writing.",
+        "Only serious problems (something broken or wrong for customers) hold up sign-off.",
+        "Small fixes are listed and done in the following week.",
+        "If we hear nothing within 2 business days, the milestone counts as approved.",
+      ],
+    },
+    {
+      title: "Going live",
+      text: [
+        "Payment 4 is due when the store is ready to go live, not on the day you choose to switch over.",
+        "Black Friday is Fri 27 Nov and Cyber Monday is Mon 30 Nov. We recommend keeping your current site running through both, and switching to the new store on Tue 1 Dec. That puts your whole Christmas period inside the free first month of support.",
+      ],
+    },
+    {
+      title: "If something we need arrives late",
+      text: [
+        "The dates assume we receive the items in “What we need from you” on time. If access or information arrives late, the dates after it move by the same number of days.",
+        "We'll always tell you straight away if something is holding us up.",
+      ],
+    },
+    {
+      title: "If anything slips",
+      text: ["November is a tight window, so we've agreed in advance which items can move into early December without holding up your launch. Anything here would be finished inside the free first month of support, at no extra cost."],
+      list: [
+        "Best-seller heroes: heroes are hand-picked at launch anyway. The automatic switch to sales data only starts once there's enough sales history.",
+        "Apple, Facebook and Shop sign-in: these need approval from Apple, Meta or Shopify. If approval isn't through by Wed 25 Nov, we launch with email, Google and Microsoft sign-in and switch the others on as soon as they're approved.",
+        "Subscriptions: if they're in scope and the details aren't settled by Fri 13 Nov, we launch one-off orders first and add recurring orders in early December.",
+        "AI chat assistant: if it needs more testing, the store launches with the enquiry form and the assistant follows shortly after.",
+      ],
+      reassure: "Nothing on this list affects taking orders, payments, pricing, freight, emails or the sync to ERPNext. Those are all ready for launch.",
+    },
+  ],
+};
+/* ===================================================================== */
+
+const $ = (id) => document.getElementById(id);
+const STATUS_LABEL = { done: "Completed", active: "In progress", upcoming: "Upcoming", paid: "Paid", invoiced: "Invoiced", pending: "Waiting", received: "Received", overdue: "Overdue" };
+const WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const D = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const fmt = (s) => { const d = D(s); return `${WD[d.getDay()]} ${d.getDate()} ${MO[d.getMonth()]}`; };
+const fmtRange = (a, b) => {
+  const da = D(a), db = D(b);
+  return da.getMonth() === db.getMonth()
+    ? `${WD[da.getDay()]} ${da.getDate()} – ${WD[db.getDay()]} ${db.getDate()} ${MO[db.getMonth()]}`
+    : `${fmt(a)} – ${fmt(b)}`;
+};
+const TODAY = (() => { if (ROADMAP.today) return D(ROADMAP.today); const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); })();
+const daysUntil = (s) => Math.round((D(s) - TODAY) / 86400000);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function phaseStats(p) {
+  const total = p.tasks.length || 1;
+  const done = p.tasks.filter(t => t.status === "done").length;
+  const anyActive = p.tasks.some(t => t.status === "active");
+  let status = p.status;
+  if (!status) {
+    if (p.tasks.length && done === p.tasks.length) status = "done";
+    else if (done > 0 || anyActive) status = "active";
+    else status = "upcoming";
+  }
+  return { done, total: p.tasks.length, pct: Math.round((done / total) * 100), status };
+}
+
+const stats = ROADMAP.phases.map(phaseStats);
+let currentIdx = stats.findIndex(s => s.status === "active");
+if (currentIdx === -1) {
+  const firstUpcoming = stats.findIndex(s => s.status === "upcoming");
+  currentIdx = firstUpcoming === -1 ? stats.length - 1 : firstUpcoming;
+}
+const allDone = stats.every(s => s.status === "done");
+let selected = currentIdx;
+
+function renderHeader() {
+  $("agency").textContent = `${ROADMAP.agency} × ${ROADMAP.client}`;
+  $("project-title").textContent = `${ROADMAP.client}: ${ROADMAP.project}`;
+  $("lede").textContent = ROADMAP.summary;
+  const u = D(ROADMAP.lastUpdated);
+  $("updated").textContent = `Last updated ${u.getDate()} ${MO[u.getMonth()]} ${u.getFullYear()}`;
+  $("footer").textContent = `Prepared by ${ROADMAP.agency} for ${ROADMAP.client}`;
+
+  // Overall progress
+  const allTasks = ROADMAP.phases.flatMap(p => p.tasks);
+  const doneCount = allTasks.filter(t => t.status === "done").length;
+  const overall = allTasks.length ? Math.round((doneCount / allTasks.length) * 100) : 0;
+  $("overall-pct").innerHTML = `${overall}% <small>${doneCount} of ${allTasks.length} tasks</small>`;
+  requestAnimationFrame(() => { $("overall-bar").style.width = overall + "%"; });
+
+  // Where we are now
+  const cur = ROADMAP.phases[currentIdx], s = stats[currentIdx];
+  $("now-title").textContent = allDone ? "All phases complete" : `Phase ${currentIdx + 1}: ${cur.name}`;
+  if (allDone) $("now-sub").textContent = "Your store is ready to go live.";
+  else if (s.status === "upcoming") $("now-sub").textContent = `Starts ${fmt(cur.start)}`;
+  else {
+    const t = cur.tasks.find(t => t.status === "active") || cur.tasks.find(t => t.status === "upcoming");
+    $("now-sub").textContent = t ? `Working on: ${t.name}` : STATUS_LABEL[s.status];
+  }
+
+  // Next milestone = first payment not yet paid
+  const pi = ROADMAP.payments.findIndex(p => p.status !== "paid");
+  if (pi === -1) {
+    $("next-title").textContent = "All milestones complete";
+    $("next-sub").textContent = "";
+  } else {
+    const p = ROADMAP.payments[pi];
+    $("next-title").textContent = p.tiedTo;
+    $("next-sub").textContent = `${p.dueLabel} · Payment ${pi + 1} (25%)`;
+  }
+
+  // Countdown
+  const dl = daysUntil(ROADMAP.goLive);
+  if (allDone || dl < 0) {
+    $("countdown").innerHTML = "Ready";
+    $("countdown-sub").textContent = `Switch-over recommended ${fmt(ROADMAP.switchOver)}`;
+  } else {
+    $("countdown").innerHTML = dl === 0 ? "Today" : `${dl} <small>day${dl === 1 ? "" : "s"} to go</small>`;
+    $("countdown-sub").textContent = `${fmt(ROADMAP.goLive)} · switch-over ${fmt(ROADMAP.switchOver)}`;
+  }
+}
+
+function renderTimeline() {
+  const tl = $("timeline");
+  tl.querySelectorAll(".step").forEach(n => n.remove());
+  ROADMAP.phases.forEach((p, i) => {
+    const s = stats[i];
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "step";
+    b.setAttribute("role", "tab");
+    b.id = "step-" + i;
+    b.dataset.status = s.status;
+    b.dataset.current = String(i === currentIdx && !allDone);
+    b.setAttribute("aria-selected", i === selected);
+    b.setAttribute("tabindex", i === selected ? "0" : "-1");
+    b.setAttribute("aria-label", `Phase ${i + 1}: ${p.name}, ${STATUS_LABEL[s.status]}`);
+    b.innerHTML = `
+      <span class="dot">${s.status === "done" ? "✓" : i + 1}</span>
+      <span class="step-text">
+        <span class="step-label">${esc(p.name)}</span>
+        <span class="step-date">${esc(fmtRange(p.start, p.end))}</span>
+        ${i === currentIdx && !allDone ? '<span class="badge here">You are here</span>' : ""}
+        ${p.milestone ? `<span class="badge ms">Payment ${p.milestone.payment}</span>` : ""}
+      </span>`;
+    b.addEventListener("click", () => select(i));
+    tl.appendChild(b);
+  });
+  positionFill();
+}
+
+function positionFill() {
+  const tl = $("timeline"), fill = $("timeline-fill"), n = ROADMAP.phases.length;
+  const target = allDone ? n - 1 : currentIdx;
+  requestAnimationFrame(() => {
+    if (matchMedia("(max-width: 760px)").matches) {
+      fill.style.width = ""; fill.style.left = "";
+      const dots = tl.querySelectorAll(".step .dot");
+      fill.style.height = dots.length ? (dots[target].getBoundingClientRect().top - dots[0].getBoundingClientRect().top) + "px" : "0";
+    } else {
+      fill.style.height = "";
+      const colW = 100 / n;
+      tl.style.setProperty("--half", colW / 2 + "%");
+      fill.style.left = colW / 2 + "%";
+      fill.style.width = (n > 1 ? target / (n - 1) : 1) * (100 - colW) + "%";
+    }
+  });
+}
+
+function renderDetail() {
+  const p = ROADMAP.phases[selected], s = stats[selected];
+  $("detail").setAttribute("aria-labelledby", "step-" + selected);
+  $("d-title").textContent = `Phase ${selected + 1}: ${p.name}`;
+  const pill = $("d-status");
+  pill.className = "pill " + s.status;
+  pill.textContent = STATUS_LABEL[s.status];
+  $("d-desc").textContent = p.description || "";
+  const co = $("d-callout");
+  co.hidden = !p.callout; co.textContent = p.callout || "";
+  $("d-dates").textContent = fmtRange(p.start, p.end);
+  $("d-pct").textContent = `${s.done} of ${s.total} tasks complete (${s.pct}%)`;
+  $("d-bar").style.width = "0";
+  requestAnimationFrame(() => { $("d-bar").style.width = s.pct + "%"; });
+  $("d-tasks").innerHTML = p.tasks.map(t => `
+    <li class="task ${t.status}">
+      <span class="tick" aria-hidden="true"></span>
+      <div>
+        <div class="task-name">${esc(t.name)}</div>
+        ${t.note ? `<div class="task-note">${esc(t.note)}</div>` : ""}
+      </div>
+      <span class="task-tag">${STATUS_LABEL[t.status] || ""}</span>
+    </li>`).join("");
+  const ms = p.milestone;
+  $("d-ms-wrap").hidden = !ms;
+  if (ms) {
+    const pay = ROADMAP.payments[ms.payment - 1];
+    $("d-ms").innerHTML = `<div class="ms-box"><strong>${esc(ms.label)}</strong><span>Payment ${ms.payment} (25%) · ${esc(ms.when)}${pay && pay.status !== "upcoming" ? " · " + STATUS_LABEL[pay.status] : ""}</span></div>`;
+  }
+  const you = p.yourPart || [];
+  $("d-you").innerHTML = you.length ? you.map(y => `<li>${esc(y)}</li>`).join("") : "<li>Nothing needed this phase</li>";
+  $("prev").disabled = selected === 0;
+  $("next").disabled = selected === ROADMAP.phases.length - 1;
+}
+
+function select(i) {
+  selected = Math.max(0, Math.min(ROADMAP.phases.length - 1, i));
+  document.querySelectorAll(".step").forEach((b, j) => {
+    b.setAttribute("aria-selected", j === selected);
+    b.setAttribute("tabindex", j === selected ? "0" : "-1");
+  });
+  renderDetail();
+  try { history.replaceState(null, "", "#phase-" + (selected + 1)); } catch (e) {}
+}
+
+function renderPayments() {
+  const firstOpen = ROADMAP.payments.findIndex(p => p.status !== "paid");
+  $("payments").innerHTML = ROADMAP.payments.map((p, i) => `
+    <div class="card pay${i === firstOpen ? " current" : ""}">
+      <div class="pay-top">
+        <span class="pay-num">${i + 1} <small>· 25%</small></span>
+        <span class="pill ${p.status}">${STATUS_LABEL[p.status]}</span>
+      </div>
+      <div>
+        <div class="pay-tied">${esc(p.tiedTo)}</div>
+        <div class="pay-due">Due ${esc(p.dueLabel)}</div>
+      </div>
+      <ul class="plain-list">${p.receive.map(r => `<li>${esc(r)}</li>`).join("")}</ul>
+    </div>`).join("");
+}
+
+function accessState(a) {
+  if (a.status === "received") return "received";
+  return daysUntil(a.by) < 0 ? "overdue" : "pending";
+}
+
+function renderAccess() {
+  $("safety").innerHTML = ROADMAP.safety.map(s => `<li>${esc(s)}</li>`).join("");
+  const items = ROADMAP.access;
+  const got = items.filter(a => a.status === "received").length;
+  const overdue = items.filter(a => accessState(a) === "overdue").length;
+  $("access-lbl").textContent = `${got} of ${items.length} received` + (overdue ? ` · ${overdue} overdue` : "");
+  $("access-count").textContent = `${got}/${items.length}`;
+  requestAnimationFrame(() => { $("access-bar").style.width = Math.round(got / items.length * 100) + "%"; });
+  $("access").innerHTML = items.map(a => {
+    const st = accessState(a);
+    return `<li><details>
+      <summary>
+        <span class="chev" aria-hidden="true"></span>
+        <span class="acc-name">${esc(a.system)}</span>
+        <span class="acc-by">By ${esc(a.byLabel || fmt(a.by))}</span>
+        <span class="pill ${st}">${STATUS_LABEL[st]}</span>
+      </summary>
+      <div class="acc-body">
+        ${a.setUp ? `<div${a.share ? "" : ' class="full"'}><h4>${a.details ? "What we need" : "What you set up"}</h4><p>${esc(a.setUp)}</p></div>` : ""}
+        ${a.share ? `<div><h4>What you share with us</h4><p>${esc(a.share)}</p></div>` : ""}
+        ${a.details ? `<div class="full"><ul class="plain-list">${a.details.map(d => `<li>${esc(d)}</li>`).join("")}</ul></div>` : ""}
+      </div>
+    </details></li>`;
+  }).join("");
+}
+
+function renderDates() {
+  const nextIdx = ROADMAP.keyDates.findIndex(k => daysUntil(k.date) >= 0);
+  $("dates").innerHTML = ROADMAP.keyDates.map((k, i) => {
+    const dd = daysUntil(k.date);
+    const cls = dd < 0 ? "past" : dd === 0 ? "today" : i === nextIdx ? "nextup" : "";
+    const tag = dd === 0 ? "Today" : i === nextIdx ? (dd === 1 ? "Tomorrow" : `In ${dd} days`) : "";
+    return `<li class="date-item ${cls}${k.key ? " key" : ""}">
+      <span class="pt" aria-hidden="true"></span>
+      <span class="when">${esc(fmt(k.date))}${tag ? `<span class="tagline">${tag}</span>` : ""}</span>
+      <div class="what">${k.items.map(x => `<div>${esc(x)}</div>`).join("")}</div>
+    </li>`;
+  }).join("");
+}
+
+function renderHow() {
+  $("how").innerHTML = ROADMAP.how.map(h => `
+    <div class="card">
+      <h3>${esc(h.title)}</h3>
+      ${(h.text || []).map(t => `<p>${esc(t)}</p>`).join("")}
+      ${h.list ? `<ul class="plain-list">${h.list.map(l => `<li>${esc(l)}</li>`).join("")}</ul>` : ""}
+      ${h.reassure ? `<div class="reassure">${esc(h.reassure)}</div>` : ""}
+    </div>`).join("");
+}
+
+// Phase navigation
+$("prev").addEventListener("click", () => select(selected - 1));
+$("next").addEventListener("click", () => select(selected + 1));
+$("timeline").addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); select(selected + 1); $("step-" + selected).focus(); }
+  if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); select(selected - 1); $("step-" + selected).focus(); }
+});
+
+// Info tabs
+(function tabs() {
+  const tabs = [...document.querySelectorAll("#info-tabs .tab")];
+  const show = (t) => {
+    tabs.forEach(x => {
+      const on = x === t;
+      x.setAttribute("aria-selected", on);
+      x.setAttribute("tabindex", on ? "0" : "-1");
+      $(x.getAttribute("aria-controls")).hidden = !on;
+    });
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => show(t));
+    t.addEventListener("keydown", (e) => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      const n = tabs[(i + d + tabs.length) % tabs.length];
+      show(n); n.focus();
+    });
+  });
+})();
+
+// Theme toggle (remembered per viewer)
+(function theme() {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("roadmap-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  $("theme-btn").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("roadmap-theme", root.dataset.theme); } catch (e) {}
+  });
+})();
+
+// Deep link: #phase-3
+const m = location.hash.match(/phase-(\d+)/);
+if (m) selected = Math.max(0, Math.min(ROADMAP.phases.length - 1, parseInt(m[1], 10) - 1));
+
+renderHeader();
+renderTimeline();
+renderDetail();
+renderPayments();
+renderAccess();
+renderDates();
+renderHow();
+addEventListener("resize", positionFill);
+</script>
+</body>
+</html>
